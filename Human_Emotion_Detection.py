@@ -1,46 +1,50 @@
+import os
 import streamlit as st
 import subprocess
 import sys
 
-# Install torch dynamically
-def install_torch():
+# Install dependencies dynamically
+def install_package(package):
     try:
-        import torch
+        __import__(package)
     except ImportError:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "torch==1.10.0"])
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
-install_torch()
+install_package('torch')
+install_package('PIL')
+install_package('torchvision')
 
-# After ensuring torch is installed, proceed with the rest of your app
 import torch
 from PIL import Image
 import torchvision.transforms as transforms
 import torch.nn.functional as F
 
+# Define the path to the model file
+MODEL_PATH = 'best_vit_fer2013_model_Human_Emotion_Detection.pt'
+
 # Load the model
 @st.cache_resource
-def load_model():
+def load_model(model_path):
+    if not os.path.exists(model_path):
+        st.error(f"Model file not found at: {model_path}")
+        return None
     try:
-        model = torch.load('best_vit_fer2013_model_Human_Emotion_Detection.pt', map_location=torch.device('cpu'))
+        model = torch.load(model_path, map_location=torch.device('cpu'))
         model.eval()
         return model
-    except FileNotFoundError as e:
-        st.error(f"Model file not found: {e}")
-        return None
     except Exception as e:
         st.error(f"Error loading model: {e}")
         return None
 
-
 # Define image transformation
 def transform_image(image):
     transform = transforms.Compose([
-        transforms.Resize((48, 48)),  # Resize the image to match model's expected size
-        transforms.Grayscale(),  # Convert to grayscale (FER2013 dataset is grayscale)
-        transforms.ToTensor(),  # Convert image to Tensor
-        transforms.Normalize((0.5,), (0.5,))  # Normalize image
+        transforms.Resize((48, 48)),
+        transforms.Grayscale(),
+        transforms.ToTensor(),
+        transforms.Normalize((0.5,), (0.5,))
     ])
-    return transform(image).unsqueeze(0)  # Add batch dimension
+    return transform(image).unsqueeze(0)
 
 # Get emotion label
 def predict_emotion(model, image_tensor):
@@ -72,15 +76,16 @@ if uploaded_file is not None:
 
     # Transform and predict
     image_tensor = transform_image(image)
-    model = load_model()
+    model = load_model(MODEL_PATH)
 
-    if st.button('Predict Emotion'):
-        predicted_class, probabilities = predict_emotion(model, image_tensor)
+    if model is not None and st.button('Predict Emotion'):
+        with st.spinner('Predicting...'):
+            predicted_class, probabilities = predict_emotion(model, image_tensor)
 
-        # Show result
-        st.write(f"Predicted Emotion: {emotion_classes[predicted_class]}")
-        
-        # Show probabilities
-        st.write("Emotion Probabilities:")
-        for i, emotion in enumerate(emotion_classes):
-            st.write(f"{emotion}: {probabilities[0][i].item()*100:.2f}%")
+            # Show result
+            st.write(f"Predicted Emotion: {emotion_classes[predicted_class]}")
+            
+            # Show probabilities
+            st.write("Emotion Probabilities:")
+            for i, emotion in enumerate(emotion_classes):
+                st.write(f"{emotion}: {probabilities[0][i].item()*100:.2f}%")
