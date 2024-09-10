@@ -1,4 +1,17 @@
 import streamlit as st
+import subprocess
+import sys
+
+# Install torch dynamically
+def install_torch():
+    try:
+        import torch
+    except ImportError:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "torch==1.10.0"])
+
+install_torch()
+
+# After ensuring torch is installed, proceed with the rest of your app
 import torch
 from PIL import Image
 import torchvision.transforms as transforms
