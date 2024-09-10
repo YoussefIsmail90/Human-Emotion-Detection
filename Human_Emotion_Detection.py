@@ -2,11 +2,6 @@ import os
 import streamlit as st
 import subprocess
 import sys
-import torch
-from PIL import Image
-import torchvision.transforms as transforms
-import torch.nn.functional as F
-
 
 # Install dependencies dynamically
 def install_package(package):
@@ -16,24 +11,13 @@ def install_package(package):
         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
 install_package('torch')
-install_package('Pillow')  # Use Pillow for compatibility
+install_package('PIL')
 install_package('torchvision')
-install_package('timm') 
 
-import timm
-# Define your model architecture
-class MyModel(torch.nn.Module):
-    def __init__(self):
-        super(MyModel, self).__init__()
-        # Define the layers of your model here
-        # Example:
-        self.vit = torch.hub.load('facebookresearch/deit:main', 'deit_base_patch16_224', pretrained=False)
-        self.fc = torch.nn.Linear(768, 7)  # Adjust based on your model's final layer
-
-    def forward(self, x):
-        x = self.vit(x)
-        x = self.fc(x)
-        return x
+import torch
+from PIL import Image
+import torchvision.transforms as transforms
+import torch.nn.functional as F
 
 # Define the path to the model file
 MODEL_PATH = 'best_vit_fer2013_model_Human_Emotion_Detection.pt'
@@ -41,12 +25,11 @@ MODEL_PATH = 'best_vit_fer2013_model_Human_Emotion_Detection.pt'
 # Load the model
 @st.cache_resource
 def load_model(model_path):
-    model = MyModel()
     if not os.path.exists(model_path):
         st.error(f"Model file not found at: {model_path}")
         return None
     try:
-        model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
+        model = torch.load(model_path, map_location=torch.device('cpu'))
         model.eval()
         return model
     except Exception as e:
@@ -83,7 +66,7 @@ Upload an image and the app will predict the emotion.
 """)
 
 # Upload image
-uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Choose an image...", type="jpg")
 
 if uploaded_file is not None:
     # Load and display image
