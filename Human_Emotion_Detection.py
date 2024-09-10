@@ -6,7 +6,7 @@ import torch
 from PIL import Image
 import torchvision.transforms as transforms
 import torch.nn.functional as F
-import timm
+
 
 # Install dependencies dynamically
 def install_package(package):
@@ -20,6 +20,7 @@ install_package('Pillow')  # Use Pillow for compatibility
 install_package('torchvision')
 install_package('timm') 
 
+import timm
 # Define your model architecture
 class MyModel(torch.nn.Module):
     def __init__(self):
