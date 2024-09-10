@@ -20,9 +20,17 @@ import torch.nn.functional as F
 # Load the model
 @st.cache_resource
 def load_model():
-    model.load_state_dict(torch.load('best_vit_fer2013_model_Human_Emotion_Detection.pt', map_location=torch.device('cpu')))
-    model.eval()  # Set the model to evaluation mode
-    return model
+    try:
+        model = torch.load('best_vit_fer2013_model_Human_Emotion_Detection.pt', map_location=torch.device('cpu'))
+        model.eval()
+        return model
+    except FileNotFoundError as e:
+        st.error(f"Model file not found: {e}")
+        return None
+    except Exception as e:
+        st.error(f"Error loading model: {e}")
+        return None
+
 
 # Define image transformation
 def transform_image(image):
