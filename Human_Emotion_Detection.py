@@ -21,7 +21,7 @@ import torch.nn.functional as F
 @st.cache_resource
 def load_model():
     model = torch.load('best_vit_fer2013_model_Human_Emotion_Detection.pt', map_location=torch.device('cpu'))
-    model.eval()  # Set the model to evaluation mode
+    # model.eval()  # Set the model to evaluation mode
     return model
 
 # Define image transformation
