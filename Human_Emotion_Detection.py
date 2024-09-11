@@ -81,9 +81,8 @@ if uploaded_file is not None:
 
     if model is not None and st.button('Predict Emotion'):
         with st.spinner('Predicting...'):
-            predicted_class, probabilities = predict_emotion(model, image_tensor)
+            predicted_class = predict_emotion(model, image_tensor)
     
             # Show result
-            for i in range(len(emotion_classes)):
-                emotion = emotion_classes[i]  # Define emotion inside the loop
-                st.write(f"{emotion}: {probabilities[0][i].item()*100:.2f}%")
+            predicted_emotion = emotion_classes[predicted_class]
+            st.write(f"Predicted Emotion: {predicted_emotion}")
