@@ -2,3 +2,4 @@ streamlit
 torchvision
 Pillow
 timm
+transformers
