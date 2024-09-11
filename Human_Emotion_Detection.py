@@ -50,7 +50,8 @@ def transform_image(image):
 def predict_emotion(model, image_tensor):
     with torch.no_grad():
         output = model(image_tensor)
-        probabilities = F.softmax(output, dim=1)
+        logits = output  # Assuming output contains raw logits
+        probabilities = F.softmax(logits, dim=1)
         predicted_class = torch.argmax(probabilities, dim=1).item()
     return predicted_class, probabilities
 
