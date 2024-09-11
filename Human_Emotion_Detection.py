@@ -2,7 +2,7 @@ import os
 import streamlit as st
 import subprocess
 import sys
-import transformers
+
 # Install dependencies dynamically
 def install_package(package):
     try:
@@ -37,11 +37,11 @@ def load_model(model_path):
         st.error(f"Error loading model: {e}")
         return None
 
-# Define image transformation
+# Define image transformation (ensure grayscale conversion if necessary)
 def transform_image(image):
     transform = transforms.Compose([
         transforms.Resize((48, 48)),
-        transforms.Grayscale(),
+        transforms.Grayscale() if image.mode == 'RGB' else transforms.ToTensor(),  # Convert to grayscale if RGB
         transforms.ToTensor(),
         transforms.Normalize((0.5,), (0.5,))
     ])
@@ -85,7 +85,7 @@ if uploaded_file is not None:
 
             # Show result
             st.write(f"Predicted Emotion: {emotion_classes[predicted_class]}")
-            
+
             # Show probabilities
             st.write("Emotion Probabilities:")
             for i, emotion in enumerate(emotion_classes):
