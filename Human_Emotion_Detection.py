@@ -13,6 +13,7 @@ def install_package(package):
 install_package('torch')
 install_package('PIL')
 install_package('torchvision')
+install_package('transformers')
 
 import torch
 from PIL import Image
