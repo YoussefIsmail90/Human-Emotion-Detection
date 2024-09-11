@@ -84,4 +84,4 @@ if uploaded_file is not None:
             predicted_class = predict_emotion(model, image_tensor)
 
             # Show result
-            st.write(f"Predicted Emotion: {emotion_classes[predicted_class]}")
+            st.write(f"{emotion}: {probabilities[0][i].item()*100:.2f}%")
