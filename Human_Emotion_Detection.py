@@ -85,4 +85,4 @@ if uploaded_file is not None:
     
             # Show result
             predicted_emotion = emotion_classes[predicted_class]
-            st.write(f"Predicted Emotion: {predicted_emotion}")
+            st.write(predicted_emotion)
