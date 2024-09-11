@@ -40,8 +40,8 @@ def load_model(model_path):
 # Define image transformation (ensure grayscale conversion if necessary)
 def transform_image(image):
     transform = transforms.Compose([
-        transforms.Resize((48, 48)),
-        transforms.ToTensor(),  # Keep RGB channels
+        transforms.Resize((224, 224)),  # Change to match model's input size
+        transforms.ToTensor(),
         transforms.Normalize((0.5,), (0.5,))
     ])
     return transform(image).unsqueeze(0)
