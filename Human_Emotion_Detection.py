@@ -51,8 +51,10 @@ def transform_image(image):
 def predict_emotion(model, image_tensor):
     with torch.no_grad():
         output = model(image_tensor)
-        predicted_class = torch.argmax(output, dim=1).item()
-    return predicted_class
+        logits = output.logits  # Extract logits if available
+        predicted_class = torch.argmax(logits, dim=1).item()
+        probabilities = torch.softmax(logits, dim=1)
+    return predicted_class, probabilities
 
 # Emotion classes (based on FER-2013 dataset)
 emotion_classes = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
