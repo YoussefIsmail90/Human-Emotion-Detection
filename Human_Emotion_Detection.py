@@ -41,8 +41,7 @@ def load_model(model_path):
 def transform_image(image):
     transform = transforms.Compose([
         transforms.Resize((48, 48)),
-        transforms.Grayscale() if image.mode == 'RGB' else transforms.ToTensor(),  # Convert to grayscale if RGB
-        transforms.ToTensor(),
+        transforms.ToTensor(),  # Keep RGB channels
         transforms.Normalize((0.5,), (0.5,))
     ])
     return transform(image).unsqueeze(0)
