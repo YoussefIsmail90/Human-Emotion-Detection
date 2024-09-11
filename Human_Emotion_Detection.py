@@ -40,8 +40,7 @@ def load_model(model_path):
 # Define image transformation
 def transform_image(image):
     transform = transforms.Compose([
-        transforms.Resize((48, 48)),
-        transforms.Grayscale() if image.mode == 'RGB' else transforms.ToTensor(),  # Convert to grayscale if RGB
+        transforms.Resize((224, 224)),  # Change to match model's input size
         transforms.ToTensor(),
         transforms.Normalize((0.5,), (0.5,))
     ])
