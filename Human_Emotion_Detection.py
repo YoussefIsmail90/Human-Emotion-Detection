@@ -37,10 +37,11 @@ def load_model(model_path):
         st.error(f"Error loading model: {e}")
         return None
 
-# Define image transformation (ensure grayscale conversion if necessary)
+# Define image transformation
 def transform_image(image):
     transform = transforms.Compose([
-        transforms.Resize((224, 224)),  # Change to match model's input size
+        transforms.Resize((48, 48)),
+        transforms.Grayscale() if image.mode == 'RGB' else transforms.ToTensor(),  # Convert to grayscale if RGB
         transforms.ToTensor(),
         transforms.Normalize((0.5,), (0.5,))
     ])
@@ -50,10 +51,8 @@ def transform_image(image):
 def predict_emotion(model, image_tensor):
     with torch.no_grad():
         output = model(image_tensor)
-        logits = output.logits  # Extract logits if available
-        predicted_class = torch.argmax(logits, dim=1).item()
-        probabilities = torch.softmax(logits, dim=1)
-    return predicted_class, probabilities
+        predicted_class = torch.argmax(output, dim=1).item()
+    return predicted_class
 
 # Emotion classes (based on FER-2013 dataset)
 emotion_classes = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
@@ -81,12 +80,7 @@ if uploaded_file is not None:
 
     if model is not None and st.button('Predict Emotion'):
         with st.spinner('Predicting...'):
-            predicted_class, probabilities = predict_emotion(model, image_tensor)
+            predicted_class = predict_emotion(model, image_tensor)
 
             # Show result
             st.write(f"Predicted Emotion: {emotion_classes[predicted_class]}")
-
-            # Show probabilities
-            st.write("Emotion Probabilities:")
-            for i, emotion in enumerate(emotion_classes):
-                st.write(f"{emotion}: {probabilities[0][i].item()*100:.2f}%")
