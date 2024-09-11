@@ -20,7 +20,7 @@ import torchvision.transforms as transforms
 import torch.nn.functional as F
 
 # Define the path to the model file
-MODEL_PATH = 'best_vit_fer2013_model_Human_Emotion_Detection.pt'
+MODEL_PATH = 'Human_Emotion_Detection.pt'
 
 # Load the model
 @st.cache_resource
