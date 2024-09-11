@@ -2,7 +2,7 @@ import os
 import streamlit as st
 import subprocess
 import sys
-
+import transformers
 # Install dependencies dynamically
 def install_package(package):
     try:
